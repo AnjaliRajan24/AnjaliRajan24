@@ -1,6 +1,6 @@
 # 💫 About Me:
 Software Engineer in Platform Engineering Org at Oracle Health & AI.<br>
-Specialized in building, scaling, and operating large-scale Kubernetes platforms across multi-cloud and hybrid environments.<br>
+Specialized in building, scaling, and operating large-scale Kubernetes platforms across multi-cloud and hybrid environments.
 Strong experience in infrastructure automation, observability, security, and CI/CD systems, supporting mission-critical production workloads.<br>
 USC Alumni | Forever a Trojan at heart 🎓
 
