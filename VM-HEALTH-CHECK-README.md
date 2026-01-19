@@ -39,6 +39,7 @@ Run the script without any arguments to perform a health check:
 **Exit Codes:**
 - `0` - System is healthy
 - `1` - System is unhealthy
+- `2` - Error retrieving system metrics
 
 ### Detailed Explanation
 
@@ -138,10 +139,10 @@ fi
 
 - **Operating System**: Linux (tested on Ubuntu, Oracle Linux, CentOS)
 - **Required Commands**: 
-  - `top` - for CPU monitoring
+  - `vmstat` - for CPU monitoring
   - `free` - for memory monitoring
   - `df` - for disk space monitoring
-  - `awk`, `sed`, `grep` - for data processing
+  - `awk`, `sed`, `tail` - for data processing
 
 These utilities are typically pre-installed on most Linux distributions.
 

@@ -4,24 +4,23 @@
 # This script monitors CPU, memory, and disk space usage
 # Returns "healthy" if all parameters are below 70%, otherwise "unhealthy"
 
-set -e
-
 # Threshold for health check (in percentage)
 THRESHOLD=70
 
 # Function to get CPU usage percentage
 get_cpu_usage() {
-    # Using top command to get CPU usage
-    # This gets the idle CPU percentage and calculates usage
-    local cpu_idle=$(top -bn1 | grep "Cpu(s)" | sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | awk '{print int($1)}')
+    # Using vmstat for more reliable cross-platform CPU usage
+    # Get the idle CPU percentage and calculate usage
+    local cpu_idle=$(vmstat 1 2 | tail -1 | awk '{print $15}')
     local cpu_usage=$((100 - cpu_idle))
     echo "$cpu_usage"
 }
 
 # Function to get memory usage percentage
 get_memory_usage() {
-    # Using free command to get memory usage
-    local mem_usage=$(free | grep Mem | awk '{printf "%.0f", ($3/$2) * 100.0}')
+    # Using free command to get memory usage based on available memory
+    # This provides a more accurate picture of actual memory pressure
+    local mem_usage=$(free | awk '/^Mem:/ {printf "%.0f", (($2-$7)/$2) * 100.0}')
     echo "$mem_usage"
 }
 
@@ -73,6 +72,12 @@ health_check() {
     local memory=$(get_memory_usage)
     local disk=$(get_disk_usage)
     
+    # Validate that we got numeric values
+    if ! [[ "$cpu" =~ ^[0-9]+$ ]] || ! [[ "$memory" =~ ^[0-9]+$ ]] || ! [[ "$disk" =~ ^[0-9]+$ ]]; then
+        echo "Error: Unable to retrieve system metrics" >&2
+        exit 2
+    fi
+    
     # Check if any parameter is above threshold
     if [ "$cpu" -gt "$THRESHOLD" ] || [ "$memory" -gt "$THRESHOLD" ] || [ "$disk" -gt "$THRESHOLD" ]; then
         echo "unhealthy"
@@ -104,6 +109,7 @@ main() {
         echo "Exit Codes:"
         echo "  0 - System is healthy"
         echo "  1 - System is unhealthy"
+        echo "  2 - Error retrieving system metrics"
     else
         health_check
     fi
